@@ -1,0 +1,8 @@
+# Files to be excluded from the repo 
+
+*.pdf
+*.txt
+
+# Including folders containing figures
+
+!*/figures/*
