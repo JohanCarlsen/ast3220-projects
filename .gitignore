@@ -2,6 +2,7 @@
 
 *.pdf
 *.txt
+*.npy
 
 # Including folders containing figures
 

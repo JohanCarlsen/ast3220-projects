@@ -70,11 +70,6 @@ def integrate(potential_type, dN):
 		initial_variables = np.array([x1_0, x2_0, x3_0])
 
 		sol = solve_ivp(differentials_exponential, N_range, initial_variables, dense_output=True)
-		
-
-
-	# N_steps = int(np.ceil((N_max - N_min) / dN))
-	# N = np.linspace(N_min, N_max, N_steps)
 
 	variables = sol.sol(N)
 
@@ -82,6 +77,11 @@ def integrate(potential_type, dN):
 	x1 = variables[0, :]
 	x2 = variables[1, :]
 	x3 = variables[2, :]
+
+	# Saving x1, x2, and x3 to be used later
+	np.save('x1', x1)
+	np.save('x2', x2)
+	np.save('x3', x3)
 
 	# Calculating the parameters
 	Omega_m = 1 - x1**2 - x2**2 - x3**2
