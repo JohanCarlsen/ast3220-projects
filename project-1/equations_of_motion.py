@@ -118,6 +118,23 @@ def age_of_Universe(Hubble_parameter):
 
 	return t_0
 
+
+def luminosity_distance(Hubble_parameter):
+
+	ln3_search = np.logical_and(N <= -np.log(3) + dN, N >= -np.log(3) - dN)
+	idx = np.where(ln3_search == True)[0][0]
+	ln3 = N[idx]
+	N_ln3 = N[idx:]
+	H = Hubble_parameter[idx:]
+	
+	integrand = np.exp(-N_ln3) / H
+	I = cumulative_trapezoid(integrand, N_ln3, initial=0)
+
+	dL = np.exp(-N_ln3) * np.flip(I) 
+
+	return z[idx:], dL
+
+
 # The interval [0, 2e7] in z corresponds to [-ln(1 + 2e7), 0] in N
 N_min = -np.log(1 + 2e7)
 N_max = 0.
@@ -142,27 +159,27 @@ Omega_m[1, :], Omega_phi[1, :], Omega_r[1, :], w_phi[1, :] = integrate('exponent
 plot_text = [r'$V(\phi)=M^5\phi^{-1}$', r'$V(\phi)=V_0e^{-\frac{3\kappa}{2}\phi}$']
 text_pos = [(1e-3, 1.5), (1e-3, .5e126)]
 
-fig, ax = plt.subplots(2, 1, figsize=(10, 6))
+# fig, ax = plt.subplots(2, 1, figsize=(10, 6))
 
-for i in range(2):
+# for i in range(2):
 
-	m = ax[i].plot(z, Omega_m[i, :], ls='dashed', color='black')
-	r = ax[i].plot(z, Omega_r[i, :], ls='dotted', color='black')
-	phi = ax[i].plot(z, Omega_phi[i, :], ls='dashdot', color='black')
-	w = ax[i].plot(z, w_phi[i, :], color='black')
+# 	m = ax[i].plot(z, Omega_m[i, :], ls='dashed', color='black')
+# 	r = ax[i].plot(z, Omega_r[i, :], ls='dotted', color='black')
+# 	phi = ax[i].plot(z, Omega_phi[i, :], ls='dashdot', color='black')
+# 	w = ax[i].plot(z, w_phi[i, :], color='black')
 
-	ax[i].set_xlabel(r'$z$')
-	ax[i].set_xscale('log')
+# 	ax[i].set_xlabel(r'$z$')
+# 	ax[i].set_xscale('log')
 
-	ax[i].text(1e-3, -.5, plot_text[i], fontsize=10)
+# 	ax[i].text(1e-3, -.5, plot_text[i], fontsize=10)
 
-# Setting labels
-labels = [r'$\Omega_m$', r'$\Omega_r$', r'$\Omega_\phi$', r'$w_\phi$']
-fig.legend([m, r, phi, w], labels=labels, loc='right')
+# # Setting labels
+# labels = [r'$\Omega_m$', r'$\Omega_r$', r'$\Omega_\phi$', r'$w_\phi$']
+# fig.legend([m, r, phi, w], labels=labels, loc='right')
 
-plt.tight_layout()
-plt.savefig('figures/equations_of_motion.pdf')
-plt.savefig('figures/equations_of_motion.png')
+# plt.tight_layout()
+# plt.savefig('figures/equations_of_motion.pdf')
+# plt.savefig('figures/equations_of_motion.png')
 
 Omega_m_0_CDM = .3
 
@@ -170,19 +187,19 @@ H_power = Hubble(Omega_m[0, -1], Omega_r[0, -1], Omega_phi[0, -1], w_phi[0, :])
 H_exp = Hubble(Omega_m[1, -1], Omega_r[1, -1], Omega_phi[1, -1], w_phi[1, :])
 H_CDM = np.sqrt(Omega_m_0_CDM * np.exp(-3 * N) + (1 - Omega_m_0_CDM))
 
-plt.figure(figsize=(10, 5))
+# plt.figure(figsize=(10, 5))
 
-plt.plot(z, H_power, ls=(0, (5, 10)), color='black', label=r'$H(z)^{PL}$')
-plt.plot(z, H_exp, ls='dotted', color='black', label=r'$H(z)^{EXP}$')
-plt.plot(z, H_CDM, ls='dashed', color='black', label=r'$H(z)^{\Lambda CDM}$')
+# plt.plot(z, H_power, ls=(0, (5, 10)), color='black', label=r'$H(z)^{PL}$')
+# plt.plot(z, H_exp, ls='dotted', color='black', label=r'$H(z)^{EXP}$')
+# plt.plot(z, H_CDM, ls='dashed', color='black', label=r'$H(z)^{\Lambda CDM}$')
 
-plt.xscale('log')
-plt.yscale('log')
-plt.xlabel('z')
-plt.ylabel(r'$H(z)/H_0$')
-plt.legend()
-plt.savefig('Hubble-parameter.pdf')
-plt.savefig('Hubble-parameter.png')
+# plt.xscale('log')
+# plt.yscale('log')
+# plt.xlabel('z')
+# plt.ylabel(r'$H(z)/H_0$')
+# plt.legend()
+# plt.savefig('Hubble-parameter.pdf')
+# plt.savefig('Hubble-parameter.png')
 
 # plt.show()
 
@@ -195,6 +212,33 @@ t_0_CDM = f'{age_of_Universe(H_CDM):.4e}'
 
 print(f"\n{'':<10} {'Power-law':<15} {'Exponential':<15} {'LCDM'}")
 print(f"{'H_0t_0':<10} {t_0_power:<15} {t_0_exp:<15} {t_0_CDM}\n")
+
+'''
+Calculating the luminosity distance for the power-law
+potential model and the exponential potential model.
+'''
+
+z_ln3, dL_power = luminosity_distance(H_power)
+_, dL_exp = luminosity_distance(H_exp)
+
+plt.figure(figsize=(10, 5))
+plt.plot(z_ln3, dL_power, ls='dashed', color='black', label=r'$d_L^{PL}$')
+plt.plot(z_ln3, dL_exp, ls='dotted', color='black', label=r'$d_L^{EXP}$')
+
+'''
+Extracting the data from the file sndata.txt
+'''
+z_data, dL_data, error_data = np.loadtxt('sndata.txt', skiprows=5, unpack=True)
+
+# plt.errorbar(z_data, dL_data, error_data, capsize=3, color='black')
+
+plt.legend()
+plt.xlabel('z')
+plt.ylabel(r'$H_0d_L/c$')
+plt.savefig('lum-dist.pdf')
+plt.savefig('lum-dist.png')
+
+plt.show()
 
 
 
