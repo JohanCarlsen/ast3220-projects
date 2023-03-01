@@ -4,7 +4,7 @@ different parameters and the EoS parameter as functions of the redshift.
 '''
 import numpy as np 
 import matplotlib.pyplot as plt 
-from scipy.integrate import solve_ivp, cumulative_trapezoid
+from scipy.integrate import solve_ivp, cumulative_trapezoid, simpson
 
 '''
 Settings for plots
@@ -101,13 +101,22 @@ def integrate(potential_type, dN):
 def Hubble(Omega_m_0, Omega_r_0, Omega_phi_0, EoS_parameter):
 
 	w_phi = EoS_parameter
-	integrand = -3 * (1 + np.flip(w_phi))
+	integrand = 3 * (1 + np.flip(w_phi))
 	I = cumulative_trapezoid(integrand, N, initial=0)
 	# I = np.trapz(integrand, N)
 
 	H = np.sqrt(Omega_m_0 * np.exp(-3 * N) + Omega_r_0 * np.exp(-4 * N) + Omega_phi_0 * np.exp(np.flip(I)))
 
 	return H
+
+
+def age_of_Universe(Hubble_parameter):
+
+	H = Hubble_parameter
+	integrand = 1 / H
+	t_0 = simpson(integrand, N)
+
+	return t_0
 
 # The interval [0, 2e7] in z corresponds to [-ln(1 + 2e7), 0] in N
 N_min = -np.log(1 + 2e7)
@@ -175,9 +184,17 @@ plt.legend()
 plt.savefig('Hubble-parameter.pdf')
 plt.savefig('Hubble-parameter.png')
 
-plt.show()
+# plt.show()
 
+'''
+Computing the age of the Universe in the different models 
+'''
+t_0_power = f'{age_of_Universe(H_power):.4e}'
+t_0_exp = f'{age_of_Universe(H_exp):.4e}'
+t_0_CDM = f'{age_of_Universe(H_CDM):.4e}'
 
+print(f"\n{'':<10} {'Power-law':<15} {'Exponential':<15} {'LCDM'}")
+print(f"{'H_0t_0':<10} {t_0_power:<15} {t_0_exp:<15} {t_0_CDM}\n")
 
 
 
