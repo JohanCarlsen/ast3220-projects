@@ -4,8 +4,13 @@ different parameters and the EoS parameter as functions of the redshift.
 '''
 import numpy as np 
 import matplotlib.pyplot as plt 
-from scipy.integrate import solve_ivp
+from scipy.integrate import solve_ivp, cumulative_trapezoid
 
+'''
+Settings for plots
+'''
+plt.rcParams['lines.linewidth'] = 1
+plt.rcParams['font.size'] = 12
 
 def differentials_powerlaw(N, variables):
 	'''
@@ -57,7 +62,7 @@ def integrate(potential_type, dN):
 
 		initial_variables = np.array([x1_0, x2_0, x3_0, lmbda_0])
 
-		sol = solve_ivp(differentials_powerlaw, N_range, initial_variables, method='DOP853', dense_output=True)
+		sol = solve_ivp(differentials_powerlaw, N_range, initial_variables, method='RK45', rtol=1e-9, atol=1e-9, dense_output=True)
 		
 	if potential_type == 'exponential':
 
@@ -68,7 +73,7 @@ def integrate(potential_type, dN):
 
 		initial_variables = np.array([x1_0, x2_0, x3_0])
 
-		sol = solve_ivp(differentials_exponential, N_range, initial_variables, method='DOP853', dense_output=True)
+		sol = solve_ivp(differentials_exponential, N_range, initial_variables, method='RK45', rtol=1e-9, atol=1e-9, dense_output=True)
 
 	variables = sol.sol(N)
 
@@ -96,10 +101,11 @@ def integrate(potential_type, dN):
 def Hubble(Omega_m_0, Omega_r_0, Omega_phi_0, EoS_parameter):
 
 	w_phi = EoS_parameter
-	integrand = -3 * (1 + w_phi)
-	I = np.trapz(integrand, N, dx=dN)
+	integrand = -3 * (1 + np.flip(w_phi))
+	I = cumulative_trapezoid(integrand, N, initial=0)
+	# I = np.trapz(integrand, N)
 
-	H = np.sqrt(Omega_m_0 * np.exp(-3 * N) + Omega_r_0 * np.exp(-4 * N) + Omega_phi_0 * I)
+	H = np.sqrt(Omega_m_0 * np.exp(-3 * N) + Omega_r_0 * np.exp(-4 * N) + Omega_phi_0 * np.exp(np.flip(I)))
 
 	return H
 
@@ -131,10 +137,10 @@ fig, ax = plt.subplots(2, 1, figsize=(10, 6))
 
 for i in range(2):
 
-	m = ax[i].plot(z, Omega_m[i, :], lw=1, ls='dashed', color='black')
-	r = ax[i].plot(z, Omega_r[i, :], lw=1, ls='dotted', color='black')
-	phi = ax[i].plot(z, Omega_phi[i, :], lw=1, ls='dashdot', color='black')
-	w = ax[i].plot(z, w_phi[i, :], lw=1, color='black')
+	m = ax[i].plot(z, Omega_m[i, :], ls='dashed', color='black')
+	r = ax[i].plot(z, Omega_r[i, :], ls='dotted', color='black')
+	phi = ax[i].plot(z, Omega_phi[i, :], ls='dashdot', color='black')
+	w = ax[i].plot(z, w_phi[i, :], color='black')
 
 	ax[i].set_xlabel(r'$z$')
 	ax[i].set_xscale('log')
@@ -153,14 +159,21 @@ Omega_m_0_CDM = .3
 
 H_power = Hubble(Omega_m[0, -1], Omega_r[0, -1], Omega_phi[0, -1], w_phi[0, :])
 H_exp = Hubble(Omega_m[1, -1], Omega_r[1, -1], Omega_phi[1, -1], w_phi[1, :])
-H_CDM = np.sqrt(Omega_m_0_CDM * np.exp(-3 * N) * (1 - Omega_m_0_CDM))
+H_CDM = np.sqrt(Omega_m_0_CDM * np.exp(-3 * N) + (1 - Omega_m_0_CDM))
 
-plt.figure()
+plt.figure(figsize=(10, 5))
 
-plt.plot(z, H_power, lw=1, ls='dashed', color='black', label=r'$H(z)^{PL}$')
-plt.plot(z, H_exp, lw=1, ls='dotted', color='black', label=r'$H(z)^{EXP}$')
-plt.plot(z, H_CDM, lw=1, ls='dashdot', color='black', label=r'$H(z)^{\Lambda CDM}$')
+plt.plot(z, H_power, ls=(0, (5, 10)), color='black', label=r'$H(z)^{PL}$')
+plt.plot(z, H_exp, ls='dotted', color='black', label=r'$H(z)^{EXP}$')
+plt.plot(z, H_CDM, ls='dashed', color='black', label=r'$H(z)^{\Lambda CDM}$')
+
+plt.xscale('log')
+plt.yscale('log')
+plt.xlabel('z')
+plt.ylabel(r'$H(z)/H_0$')
 plt.legend()
+plt.savefig('Hubble-parameter.pdf')
+plt.savefig('Hubble-parameter.png')
 
 plt.show()
 
