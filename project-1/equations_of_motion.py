@@ -103,7 +103,6 @@ def Hubble(Omega_m_0, Omega_r_0, Omega_phi_0, EoS_parameter):
 	w_phi = EoS_parameter
 	integrand = 3 * (1 + np.flip(w_phi))
 	I = cumulative_trapezoid(integrand, N, initial=0)
-	# I = np.trapz(integrand, N)
 
 	H = np.sqrt(Omega_m_0 * np.exp(-3 * N) + Omega_r_0 * np.exp(-4 * N) + Omega_phi_0 * np.exp(np.flip(I)))
 
@@ -159,27 +158,27 @@ Omega_m[1, :], Omega_phi[1, :], Omega_r[1, :], w_phi[1, :] = integrate('exponent
 plot_text = [r'$V(\phi)=M^5\phi^{-1}$', r'$V(\phi)=V_0e^{-\frac{3\kappa}{2}\phi}$']
 text_pos = [(1e-3, 1.5), (1e-3, .5e126)]
 
-# fig, ax = plt.subplots(2, 1, figsize=(10, 6))
+fig, ax = plt.subplots(2, 1, figsize=(10, 6))
 
-# for i in range(2):
+for i in range(2):
 
-# 	m = ax[i].plot(z, Omega_m[i, :], ls='dashed', color='black')
-# 	r = ax[i].plot(z, Omega_r[i, :], ls='dotted', color='black')
-# 	phi = ax[i].plot(z, Omega_phi[i, :], ls='dashdot', color='black')
-# 	w = ax[i].plot(z, w_phi[i, :], color='black')
+	m = ax[i].plot(z, Omega_m[i, :], ls='dashed', color='black')
+	r = ax[i].plot(z, Omega_r[i, :], ls='dotted', color='black')
+	phi = ax[i].plot(z, Omega_phi[i, :], ls='dashdot', color='black')
+	w = ax[i].plot(z, w_phi[i, :], color='black')
 
-# 	ax[i].set_xlabel(r'$z$')
-# 	ax[i].set_xscale('log')
+	ax[i].set_xlabel(r'$z$')
+	ax[i].set_xscale('log')
 
-# 	ax[i].text(1e-3, -.5, plot_text[i], fontsize=10)
+	ax[i].text(1e-3, -.5, plot_text[i], fontsize=10)
 
-# # Setting labels
-# labels = [r'$\Omega_m$', r'$\Omega_r$', r'$\Omega_\phi$', r'$w_\phi$']
-# fig.legend([m, r, phi, w], labels=labels, loc='right')
+# Setting labels
+labels = [r'$\Omega_m$', r'$\Omega_r$', r'$\Omega_\phi$', r'$w_\phi$']
+fig.legend([m, r, phi, w], labels=labels, loc='right')
 
-# plt.tight_layout()
-# plt.savefig('figures/equations_of_motion.pdf')
-# plt.savefig('figures/equations_of_motion.png')
+plt.tight_layout()
+plt.savefig('figures/equations_of_motion.pdf')
+plt.savefig('figures/equations_of_motion.png')
 
 Omega_m_0_CDM = .3
 
@@ -187,21 +186,21 @@ H_power = Hubble(Omega_m[0, -1], Omega_r[0, -1], Omega_phi[0, -1], w_phi[0, :])
 H_exp = Hubble(Omega_m[1, -1], Omega_r[1, -1], Omega_phi[1, -1], w_phi[1, :])
 H_CDM = np.sqrt(Omega_m_0_CDM * np.exp(-3 * N) + (1 - Omega_m_0_CDM))
 
-# plt.figure(figsize=(10, 5))
+plt.figure(figsize=(10, 5))
 
-# plt.plot(z, H_power, ls=(0, (5, 10)), color='black', label=r'$H(z)^{PL}$')
-# plt.plot(z, H_exp, ls='dotted', color='black', label=r'$H(z)^{EXP}$')
-# plt.plot(z, H_CDM, ls='dashed', color='black', label=r'$H(z)^{\Lambda CDM}$')
+plt.plot(z, H_power, ls=(0, (5, 10)), color='black', label=r'$H(z)^{PL}$')
+plt.plot(z, H_exp, ls='dotted', color='black', label=r'$H(z)^{EXP}$')
+plt.plot(z, H_CDM, ls='dashed', color='black', label=r'$H(z)^{\Lambda CDM}$')
 
-# plt.xscale('log')
-# plt.yscale('log')
-# plt.xlabel('z')
-# plt.ylabel(r'$H(z)/H_0$')
-# plt.legend()
-# plt.savefig('Hubble-parameter.pdf')
-# plt.savefig('Hubble-parameter.png')
+plt.xscale('log')
+plt.yscale('log')
+plt.xlabel('z')
+plt.ylabel(r'$H(z)/H_0$')
+plt.legend()
+plt.savefig('figures/Hubble-parameter.pdf')
+plt.savefig('figures/Hubble-parameter.png')
 
-# plt.show()
+plt.show()
 
 '''
 Computing the age of the Universe in the different models 
@@ -220,10 +219,12 @@ potential model and the exponential potential model.
 
 z_ln3, dL_power = luminosity_distance(H_power)
 _, dL_exp = luminosity_distance(H_exp)
+_, dL_CDM = luminosity_distance(H_CDM)
 
 plt.figure(figsize=(10, 5))
 plt.plot(z_ln3, dL_power, ls='dashed', color='black', label=r'$d_L^{PL}$')
 plt.plot(z_ln3, dL_exp, ls='dotted', color='black', label=r'$d_L^{EXP}$')
+plt.plot(z_ln3, dL_CDM * .7, ls='solid', color='black', label=r'$d_L^{\Lambda CDM}$')
 
 '''
 Extracting the data from the file sndata.txt
@@ -235,8 +236,8 @@ z_data, dL_data, error_data = np.loadtxt('sndata.txt', skiprows=5, unpack=True)
 plt.legend()
 plt.xlabel('z')
 plt.ylabel(r'$H_0d_L/c$')
-plt.savefig('lum-dist.pdf')
-plt.savefig('lum-dist.png')
+plt.savefig('figures/lum-dist.pdf')
+plt.savefig('figures/lum-dist.png')
 
 plt.show()
 
