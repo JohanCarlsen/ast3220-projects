@@ -251,7 +251,7 @@ if __name__ == '__main__':
 	Setting default plotting parameters.
 	'''
 	plt.rcParams['lines.linewidth'] = 1
-	plt.rcParams['figure.figsize'] = (10, 5)
+	plt.rcParams['figure.figsize'] = (10, 3.5)
 
 	z_max = 2e7
 	dN = 1e-4
@@ -267,18 +267,20 @@ if __name__ == '__main__':
 
 	plt.figure()
 	expon.plot_parameters()
+	plt.tight_layout()
 	plt.savefig('figures/exp_params.pdf')
 	plt.savefig('figures/exp_params.png')
 
 	plt.figure()
 	power.plot_parameters()
+	plt.tight_layout()
 	plt.savefig('figures/pow_params.pdf')
 	plt.savefig('figures/pow_params.png')
 
 	N = expon.N 
 	z = expon.z
 	O_m0 = .3 		# Setting the Omega_m0 to 0.3 for the LCDM model
-	
+
 	H_CDM = np.sqrt(O_m0 * np.exp(-3 * N) + (1 - O_m0))
 	z_crop, dL_CDM = luminosity_distance(H_CDM)
 
@@ -287,6 +289,7 @@ if __name__ == '__main__':
 	power.plot_Hubble_parameter()
 	plt.plot(z, H_CDM, color='black', ls='dashed', label=r'$H^{\Lambda CDM}$')
 	plt.legend()
+	plt.tight_layout()
 	plt.savefig('figures/hubble_param.pdf')
 	plt.savefig('figures/hubble_param.png')
 
@@ -295,6 +298,7 @@ if __name__ == '__main__':
 	power.plot_luminosity_distance()
 	plt.plot(z_crop, dL_CDM, color='black', label=r'$dL^{\Lambda CDM}$')
 	plt.legend()
+	plt.tight_layout()
 	plt.savefig('figures/lum_dist.pdf')
 	plt.savefig('figures/lum_dist.png')
 
@@ -334,6 +338,4 @@ if __name__ == '__main__':
 
 	print(f'Best fit for Omega_m0 for the LCDM model: {O_m0_best}\n')
 
-
-
-	# plt.show()
+	plt.show()
