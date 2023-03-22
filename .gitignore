@@ -4,6 +4,10 @@
 *.txt
 *.npy
 
+# Folders
+
+__pycache__/
+
 # Including folders containing figures
 
 !*/figures/*.png
