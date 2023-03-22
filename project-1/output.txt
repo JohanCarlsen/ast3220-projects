@@ -1,0 +1,9 @@
+# Output printed to terminal 
+
+           Power-law       Exponential     LCDM
+H_0t_0     9.9317e-01      9.7296e-01      9.6410e-01
+
+Chi-squared for exponential potential:	218.3188
+Chi-squared for power-law potential:	230.1216
+
+Best fit for Omega_m0 for the LCDM model: 0.302

@@ -8,6 +8,7 @@
 
 __pycache__/
 
-# Including folders containing figures
+# Including folders containing figures, and text files with output
 
 !*/figures/*.png
+!output.txt
