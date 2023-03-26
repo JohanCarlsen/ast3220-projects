@@ -338,4 +338,10 @@ if __name__ == '__main__':
 
 	print(f'Best fit for Omega_m0 for the LCDM model: {O_m0_best}\n')
 
+	H_CDM_bestfit = np.sqrt(O_m0_best * np.exp(-3 * N) + (1 - O_m0_best))	# Best fit Hubble parameter
+	__, dL_CDM_bestfit = luminosity_distance(H_CDM_bestfit)					# Best fit dL
+
+	chi_LCDM_bestfit = chi_squared(dL_CDM_bestfit, dL_data)
+	print(f'Chi squared for best fitted LCDM:\t{chi_LCDM_bestfit:.4f}\n')
+
 	plt.show()
