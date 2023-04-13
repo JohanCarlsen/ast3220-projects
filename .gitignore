@@ -10,7 +10,7 @@ __pycache__/
 
 # Random sh*t
 
-.DS_Store
+*.DS_Store
 
 # Including folders containing figures, and text files with output
 
