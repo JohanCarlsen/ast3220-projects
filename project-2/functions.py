@@ -6,6 +6,9 @@ from scipy.integrate import solve_ivp, quad
 
 def t(T):
 
+	Neff = 3. 
+	O_r0 = 8 * pi**3 * G / (45 * H0**2) * (k * T0)**4 / (hbar**3 * c**5) * (1 + Neff * 7/8 * (4/11)**(4/3))
+
 	time = 1 / (2 * H0 * np.sqrt(O_r0)) * (T0/T)**2
 
 	return time
