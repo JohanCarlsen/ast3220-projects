@@ -10,7 +10,7 @@ def t(T):
 
 	return time
 
-def differentials(lnT, variables):
+def dYn_dYp(lnT, variables):
 	'''
 	Contains the differentials dY_i/d(lnT),
 	which will be solved by solve_ivp.
@@ -21,6 +21,8 @@ def differentials(lnT, variables):
 	T_nu = (4/11)**(1/3) * T 
 	T9 = T * 1e-9
 	T9_nu = T_nu * 1e-9
+	Neff = 3. 
+	O_r0 = 8 * pi**3 * G / (45 * H0**2) * (k * T0)**4 / (hbar**3 * c**5) * (1 + Neff * 7/8 * (4/11)**(4/3))
 	H = H0 * np.sqrt(O_r0) * (T/T0)**2
 
 	Z = 5.93 / T9 
@@ -45,7 +47,7 @@ def differentials(lnT, variables):
 
 	return diffs
 
-def Boltzmann(lnT, variables):
+def dYn_dYp_dYD(lnT, variables):
 
 	Yn, Yp, YD = variables
 
@@ -53,6 +55,8 @@ def Boltzmann(lnT, variables):
 	T_nu = (4/11)**(1/3) * T 
 	T9 = T * 1e-9
 	T9_nu = T_nu * 1e-9
+	Neff = 3. 
+	O_r0 = 8 * pi**3 * G / (45 * H0**2) * (k * T0)**4 / (hbar**3 * c**5) * (1 + Neff * 7/8 * (4/11)**(4/3))
 	H = H0 * np.sqrt(O_r0) * (T/T0)**2
 
 	Z = 5.93 / T9 

@@ -88,7 +88,9 @@ ax2.set_ylabel(r'$Y_i/Y_p$')
 ax2.legend(loc='center left')
 
 ax3.plot(O_b0, prob/np.max(prob), lw=1, color='black')
+ax3.text(5.5e-2, .75, r'Best fit for $\Omega_{b0}$: ' + f'{best_O_b0}')
 ax3.set_xlim([1e-2, 1])
+ax3.set_xticks([1e-2, best_O_b0, 1e-1, 1])
 ax3.set_yticks(np.linspace(0, 1, 3))
 ax3.set_ylabel('Normalized\nprobability')
 ax3.set_xscale('log')
@@ -164,6 +166,7 @@ ax3.legend(loc='lower left')
 
 ax4.plot(Neff, prob/np.max(prob), color='black', lw=1)
 ax4.set_xlim([1, 5])
+ax4.text(3.5, .75, r'Best fit for N$_{eff}$: ' + f'{best_Neff}')
 ax4.set_ylabel('Normalized\nprobability')
 ax4.set_xlabel(r'N$_{eff}$')
 
