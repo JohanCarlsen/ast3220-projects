@@ -16,3 +16,4 @@ __pycache__/
 
 !*/figures/*.png
 !output.txt
+!README.txt
