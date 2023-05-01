@@ -68,8 +68,8 @@ fig, (ax1, ax2, ax3) = plt.subplots(3, 1, gridspec_kw=gridspec, sharex=True)
 
 ax1.plot(O_b0, 4 * YHe4, color='green', label=r'He$^4$')
 ax1.fill_between(O_b0, obs_4YHe4_lower, obs_4YHe4_upper, color='green', alpha=.4)
-ax1.plot([best_O_b0, best_O_b0], [.2, .31], ls='dotted', lw=1, color='black')
-ax1.set_ylim([.20, .31])
+ax1.plot([best_O_b0, best_O_b0], [.2, .33], ls='dotted', lw=1, color='black')
+ax1.set_ylim([.2, .33])
 ax1.set_ylabel(r'$4Y_{He^4}$')
 ax1.set_xscale('log')
 ax1.legend()
@@ -88,7 +88,6 @@ ax2.legend(loc='center left')
 
 ax3.plot(O_b0, prob/np.max(prob), lw=1, color='black')
 ax3.set_xlim([1e-2, 1])
-ax3.set_ylim([0, 1.1])
 ax3.set_ylabel('Normalized\nprobability')
 ax3.set_xscale('log')
 ax3.set_xlabel(r'$\Omega_{b0}$')
@@ -131,7 +130,6 @@ model = np.array([YDYp, YHe4, YLi7Yp])
 chi_sq = np.sum((model.T - obser)**2 / error**2, axis=-1)
 
 best_Neff = Neff[np.where(chi_sq == np.min(chi_sq))[0][0]]
-print(best_Neff)
 
 prob = gaussian(Neff, best_Neff, error)
 
