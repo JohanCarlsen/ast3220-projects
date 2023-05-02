@@ -132,6 +132,7 @@ YHe3 = variables[4, :]
 YHe4 = variables[5, :]
 YLi7 = variables[6, :]
 YBe7 = variables[7, :]
+sum_Yi = Yn + Yp + 2*YD + 3*YT + 3*YHe3 + 4*YHe4 + 7*YLi7 + 7*YBe7
 
 fig, ax = plt.subplots()
 
@@ -143,6 +144,7 @@ ax.plot(T_plot, 3 * YHe3, label=r'He$^3$')
 ax.plot(T_plot, 4 * YHe4, label=r'He$^4$')
 ax.plot(T_plot, 7 * YLi7, label=r'Li$^7$')
 ax.plot(T_plot, 7 * YBe7, label=r'Be$^7$')
+ax.plot(T_plot, sum_Yi, lw=1, ls='dashed', color='black', label=r'$\sum A_iY_i$')
 ax.set_xlabel('T[K]')
 ax.set_ylabel(r'Mass fraction $A_iY_i$')
 ax.set_ylim([1e-11, 10])
