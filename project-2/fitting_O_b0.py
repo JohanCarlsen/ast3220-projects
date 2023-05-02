@@ -65,6 +65,7 @@ print(f'\nComputed models for {n_runs} O_b0 values in: {time_outer//60:2.0f} min
 
 YDYp = YD / Yp 
 YLi7Yp = YLi7 / Yp
+YHe3 /= Yp
 
 model = np.array([YDYp, YHe4, YLi7Yp])
 np.save(f'fitting-O_b0-model-{n_runs}-runs', model)

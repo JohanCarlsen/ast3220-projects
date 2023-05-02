@@ -450,10 +450,6 @@ def element_abundance(lnT, variables, Omega_b0=None, Omega_r0=None):
 
 	return diffs
 
-def gaussian(x, mean, stdev):
-
-	return 1 / np.sqrt(2 * np.prod(stdev**2)) * np.exp(- .5 * ((x - mean) / np.prod(stdev))**2)
-
 # Constants 
 k = const.k_B.cgs.value				# Boltzmann's constant in cgs-units
 hbar = const.hbar.cgs.value			# Planck's constant in cgs-units

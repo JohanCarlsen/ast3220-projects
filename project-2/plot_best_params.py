@@ -1,7 +1,6 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 from scipy.interpolate import interp1d
-from functions import gaussian
 
 plt.rcParams.update({
 	'text.usetex': True,
@@ -16,6 +15,7 @@ plt.rcParams.update({
 Finding the best fit for Omega_b0
 '''
 model = np.load('fitting-O_b0-model-20-runs.npy')
+model[1, :] *= 4
 YHe3 = np.load('fitting-O_b0-YHe3-20-runs.npy')
 
 YDYp, YHe4, YLi7Yp = model
@@ -43,16 +43,16 @@ YHe3 = np.exp(inter_YHe3(np.log(O_b0)))
 model = np.array([YDYp, YHe4, YLi7Yp])
 
 obs_YDYp = 2.57e-5
-obs_YDYp_lower = (2.57 - .03) * 1e-5
-obs_YDYp_upper = (2.57 + .03) * 1e-5
+obs_YDYp_lower = obs_YDYp - .03e-5
+obs_YDYp_upper = obs_YDYp + .03e-5
 
 obs_4YHe4 = 0.254
-obs_4YHe4_lower = 0.254 - .003
-obs_4YHe4_upper = 0.254 + .003
+obs_4YHe4_lower = obs_4YHe4 - .003
+obs_4YHe4_upper = obs_4YHe4 + .003
 
 obs_YLi7Yp = 1.6e-10 
-obs_YLi7Yp_lower = (1.6 - .3) * 1e-10
-obs_YLi7Yp_upper = (1.6 + .3) * 1e-10
+obs_YLi7Yp_lower = obs_YLi7Yp - .3e-10
+obs_YLi7Yp_upper = obs_YLi7Yp + .3e-10
 
 obser = np.array([obs_YDYp, obs_4YHe4, obs_YLi7Yp])
 error = np.array([.03e-5, .003, .3e-10])
@@ -61,12 +61,14 @@ chi_sq = np.sum((model.T - obser)**2 / error**2, axis=-1)
 
 best_O_b0 = O_b0[np.where(chi_sq == np.min(chi_sq))[0][0]]
 
-prob = gaussian(O_b0, best_O_b0, error)
+print(f'Best fit for Omega_b0: {best_O_b0}, with chi2: {np.min(chi_sq):.4f}')
+
+prob = 1 / np.sqrt(2 * np.prod(error**2)) * np.exp(- chi_sq)
 
 gridspec = dict(height_ratios=[.3, 1, .3])
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, gridspec_kw=gridspec, sharex=True)
 
-ax1.plot(O_b0, 4 * YHe4, color='green', label=r'He$^4$')
+ax1.plot(O_b0, YHe4, color='green', label=r'He$^4$')
 ax1.fill_between(O_b0, obs_4YHe4_lower, obs_4YHe4_upper, color='green', alpha=.4)
 ax1.plot([best_O_b0, best_O_b0], [.2, .33], ls='dotted', lw=1, color='black')
 ax1.set_ylim([.2, .33])
@@ -99,12 +101,15 @@ ax3.set_xlabel(r'$\Omega_{b0}$')
 fig.savefig('figures/best-fit-O_r0.pdf')
 fig.savefig('figures/best-fit-O_r0.png')
 
+plt.show()
+
 '''
 Finding the best fit for Neff. Note that in order to find the best fit for both 
 Omega_b0 and Neff, we first computed the above fit for Omega_b0, and then used 
 that value in the program fitting_Neffpy. 
 '''
 model = np.load('fitting-Neff-model-20-runs.npy')
+model[1, :] *= 4
 YHe3 = np.load('fitting-Neff-YHe3-20-runs.npy')
 
 YDYp, YHe4, YLi7Yp = model
@@ -135,11 +140,13 @@ chi_sq = np.sum((model.T - obser)**2 / error**2, axis=-1)
 
 best_Neff = Neff[np.where(chi_sq == np.min(chi_sq))[0][0]]
 
-prob = gaussian(Neff, best_Neff, error)
+print(f'Best fit for N_eff: {best_Neff}, with chi2: {np.min(chi_sq):.4f}')
+
+prob = 1 / np.sqrt(2 * np.prod(error**2)) * np.exp(- chi_sq)
 
 fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, sharex=True)
 
-ax1.plot(Neff, 4 * YHe4, color='green', label=r'He$^4$')
+ax1.plot(Neff, YHe4, color='green', label=r'He$^4$')
 ax1.fill_between(Neff, obs_4YHe4_lower, obs_4YHe4_upper, color='green', alpha=.4)
 ax1.plot([best_Neff, best_Neff], [.22, .30], ls='dotted', lw=1, color='black')
 ax1.set_ylim([.22, .30])
@@ -150,9 +157,9 @@ ax1.legend()
 ax2.plot(Neff, YDYp, label='D')
 ax2.plot(Neff, YHe3, label=r'He$^3$')
 ax2.fill_between(Neff, obs_YDYp_lower, obs_YDYp_upper, alpha=.4)
-ax2.plot([best_Neff, best_Neff], [.5e-5, 5e-5], ls='dotted', lw=1, color='black')
+ax2.plot([best_Neff, best_Neff], [1e-5, 5e-5], ls='dotted', lw=1, color='black')
 ax2.set_ylabel(r'$Y_i/Y_p$')
-ax2.set_ylim([.5e-5, 5e-5])
+ax2.set_ylim([1e-5, 5e-5])
 ax2.set_yticks(np.linspace(1, 5, 5)*1e-5)
 ax2.legend()
 
