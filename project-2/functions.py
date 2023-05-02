@@ -451,19 +451,19 @@ def element_abundance(lnT, variables, Omega_b0=None, Omega_r0=None):
 	return diffs
 
 # Constants 
-k = const.k_B.cgs.value				# Boltzmann's constant in cgs-units
-hbar = const.hbar.cgs.value			# Planck's constant in cgs-units
-c = const.c.cgs.value				# Speed of light in cgs-units
-G = const.G.cgs.value				# Gravitational constant in cgs-units
-m_e = const.m_e.cgs.value			# Electron mass in cgs-units 
-m_p = const.m_p.cgs.value			# Proton mass in cgs-units
-m_n = const.m_n.cgs.value			# Neutron mass in cgs-units
+k = const.k_B.cgs.value											# Boltzmann's constant in cgs-units
+hbar = const.hbar.cgs.value										# Planck's constant in cgs-units
+c = const.c.cgs.value											# Speed of light in cgs-units
+G = const.G.cgs.value											# Gravitational constant in cgs-units
+m_e = const.m_e.cgs.value										# Electron mass in cgs-units 
+m_p = const.m_p.cgs.value										# Proton mass in cgs-units
+m_n = const.m_n.cgs.value										# Neutron mass in cgs-units
 pi = np.pi
-h = .7 								# Dimensionless Hubble constant
-T0 = 2.725							# CMB temperature, today in K
-H0 = (100 * h * units.km / (units.s * units.Mpc)).cgs.value				# Hubble constant, today in s^-1
-tau = 1700.		# Free neutron decay time [s]
-q = 2.53		# (m_n - m_p) / m_e
+h = .7 															# Dimensionless Hubble constant
+T0 = 2.725														# CMB temperature, today in K
+H0 = (100 * h * units.km / (units.s * units.Mpc)).cgs.value 	# Hubble constant, today in s^-1
+tau = 1700.														# Free neutron decay time [s]
+q = 2.53														# (m_n - m_p) / m_e
 
 rho_c0 = 3 * H0**2 / (8 * pi * G)
 
