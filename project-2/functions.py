@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt  
 import astropy.constants as const
 from astropy import units 
-from scipy.integrate import solve_ivp, quad
+from scipy.integrate import solve_ivp, simpson
 
 def t(T):
 
@@ -31,14 +31,15 @@ def dYn_dYp(lnT, variables):
 	Z = 5.93 / T9 
 	Z_nu = 5.93 / T9_nu
 
-	a = 1. 
-	b = np.inf
-
 	func = lambda x, q: (x + q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(x * Z)) * (1 + np.exp(-(x + q) * Z_nu))) \
 	                  + (x - q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(-x * Z)) * (1 + np.exp((x - q) * Z_nu)))
 
-	I_n_p, _ = quad(func, a, b, args=(q,))
-	I_p_n, _ = quad(func, a, b, args=(-q,))
+	x = np.linspace(1, 100, 1001)
+	I1 = func(x, q)
+	I2 = func(x, -q)
+
+	I_n_p = simpson(I1, x)
+	I_p_n = simpson(I2, x)
 
 	gamma_n_p = 1/tau * I_n_p
 	gamma_p_n = 1/tau * I_p_n
@@ -69,14 +70,15 @@ def dYn_dYp_dYD(lnT, variables):
 	rho_c0 = 3 * H0**2 / (8 * pi * G)
 	rho_b = O_b0 * rho_c0 * (T/T0)**3
 
-	a = 1. 
-	b = np.inf
-
 	func = lambda x, q: (x + q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(x * Z)) * (1 + np.exp(-(x + q) * Z_nu))) \
 	                  + (x - q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(-x * Z)) * (1 + np.exp((x - q) * Z_nu)))
 
-	I_n_p, _ = quad(func, a, b, args=(q,))
-	I_p_n, _ = quad(func, a, b, args=(-q,))
+	x = np.linspace(1, 100, 1001)
+	I1 = func(x, q)
+	I2 = func(x, -q)
+
+	I_n_p = simpson(I1, x)
+	I_p_n = simpson(I2, x)
 
 	pn =  2.5e4 * rho_b
 
@@ -203,7 +205,7 @@ def strong_15(T_9, rho_b):
 # He3 + He4 <--> Be7 + gamma 
 def strong_16(T_9, rho_b):
 
-	rate_He3He4 = 2.8e6 * rho_b * T_9**(-2/3) * np.exp(-12.8 * T_9**(-1/3)) * (1 + 0.0326 * T_9**(1/3) \
+	rate_He3He4 = 4.8e6 * rho_b * T_9**(-2/3) * np.exp(-12.8 * T_9**(-1/3)) * (1 + 0.0326 * T_9**(1/3) \
 																				 - 0.219 * T_9**(2/3) \
 																				 - 0.0499 * T_9 \
 																				 + 0.0258 * T_9**(4/3) \
@@ -278,14 +280,15 @@ def element_abundance(lnT, variables, Omega_b0=None, Omega_r0=None):
 
 	rho_b = O_b0 * rho_c0 * (T/T0)**3
 
-	a = 1. 
-	b = np.inf
-
 	func = lambda x, q: (x + q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(x * Z)) * (1 + np.exp(-(x + q) * Z_nu))) \
 	                  + (x - q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(-x * Z)) * (1 + np.exp((x - q) * Z_nu)))
 
-	I_n_p, _ = quad(func, a, b, args=(q,))
-	I_p_n, _ = quad(func, a, b, args=(-q,))
+	x = np.linspace(1, 100, 1001)
+	I1 = func(x, q)
+	I2 = func(x, -q)
+
+	I_n_p = simpson(I1, x)
+	I_p_n = simpson(I2, x)
 
 	# Table 2a)
 	# Reactions 1)-3)

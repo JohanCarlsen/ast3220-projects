@@ -101,8 +101,6 @@ ax3.set_xlabel(r'$\Omega_{b0}$')
 fig.savefig('figures/best-fit-O_r0.pdf')
 fig.savefig('figures/best-fit-O_r0.png')
 
-plt.show()
-
 '''
 Finding the best fit for Neff. Note that in order to find the best fit for both 
 Omega_b0 and Neff, we first computed the above fit for Omega_b0, and then used 
@@ -140,7 +138,7 @@ chi_sq = np.sum((model.T - obser)**2 / error**2, axis=-1)
 
 best_Neff = Neff[np.where(chi_sq == np.min(chi_sq))[0][0]]
 
-print(f'Best fit for N_eff: {best_Neff}, with chi2: {np.min(chi_sq):.4f}')
+print(f'Best fit for N_eff: {best_Neff:.4f}, with chi2: {np.min(chi_sq):.4f}')
 
 prob = 1 / np.sqrt(2 * np.prod(error**2)) * np.exp(- chi_sq)
 
@@ -165,15 +163,14 @@ ax2.legend()
 
 ax3.plot(Neff, YLi7Yp, color='red', label=r'Li$^7$')
 ax3.fill_between(Neff, obs_YLi7Yp_lower, obs_YLi7Yp_upper, color='red', alpha=.4)
-ax3.plot([best_Neff, best_Neff], [5e-11, 2e-10], ls='dotted', lw=1, color='black')
+ax3.plot([best_Neff, best_Neff], [5e-11, 3e-10], ls='dotted', lw=1, color='black')
 ax3.set_ylabel(r'$Y_i/Y_p$')
-ax3.set_ylim([5e-11, 2e-10])
-ax3.set_yticks(np.linspace(.5, 2, 4)*1e-10)
-ax3.legend(loc='lower left')
+ax3.set_ylim([5e-11, 3e-10])
+ax3.legend(loc='upper left')
 
 ax4.plot(Neff, prob/np.max(prob), color='black', lw=1)
 ax4.set_xlim([1, 5])
-ax4.text(3.5, .75, r'Best fit for N$_{eff}$: ' + f'{best_Neff}')
+ax4.text(3.25, .75, r'Best fit for N$_{eff}$: ' + f'{best_Neff:.4f}')
 ax4.set_ylabel('Normalized\nprobability')
 ax4.set_xlabel(r'N$_{eff}$')
 
