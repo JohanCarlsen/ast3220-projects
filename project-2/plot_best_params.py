@@ -170,7 +170,7 @@ ax3.legend(loc='upper left')
 
 ax4.plot(Neff, prob/np.max(prob), color='black', lw=1)
 ax4.set_xlim([1, 5])
-ax4.text(3.25, .75, r'Best fit for N$_\mathrm{eff}$: ' + f'{best_Neff:.4f}')
+ax4.text(3.25, .75, r'Best fit for N$_\mathrm{eff}$: ' + f'{best_Neff:.3f}')
 ax4.set_ylabel('Normalized\nprobability')
 ax4.set_xlabel(r'N$_\mathrm{eff}$')
 
