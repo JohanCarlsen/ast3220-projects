@@ -73,7 +73,7 @@ ax1.fill_between(O_b0, obs_4YHe4_lower, obs_4YHe4_upper, color='green', alpha=.4
 ax1.plot([best_O_b0, best_O_b0], [.2, .33], ls='dotted', lw=1, color='black')
 ax1.set_ylim([.2, .33])
 ax1.set_yticks(np.linspace(.2, .3, 3))
-ax1.set_ylabel(r'$4Y_{He^4}$')
+ax1.set_ylabel(r'$4Y_{\mathrm{He}^4}$')
 ax1.set_xscale('log')
 ax1.legend(loc='upper left')
 
@@ -149,7 +149,7 @@ ax1.fill_between(Neff, obs_4YHe4_lower, obs_4YHe4_upper, color='green', alpha=.4
 ax1.plot([best_Neff, best_Neff], [.22, .30], ls='dotted', lw=1, color='black')
 ax1.set_ylim([.22, .30])
 ax1.set_yticks(np.linspace(.22, .3, 5))
-ax1.set_ylabel(r'$4Y_{He^4}$')
+ax1.set_ylabel(r'$4Y_{\mathrm{He}^4}$')
 ax1.legend()
 
 ax2.plot(Neff, YDYp, label='D')
@@ -170,9 +170,9 @@ ax3.legend(loc='upper left')
 
 ax4.plot(Neff, prob/np.max(prob), color='black', lw=1)
 ax4.set_xlim([1, 5])
-ax4.text(3.25, .75, r'Best fit for N$_{eff}$: ' + f'{best_Neff:.4f}')
+ax4.text(3.25, .75, r'Best fit for N$_\mathrm{eff}$: ' + f'{best_Neff:.4f}')
 ax4.set_ylabel('Normalized\nprobability')
-ax4.set_xlabel(r'N$_{eff}$')
+ax4.set_xlabel(r'N$_\mathrm{eff}$')
 
 fig.savefig('figures/best-fit-Neff.png')
 fig.savefig('figures/best-fit-Neff.pdf')

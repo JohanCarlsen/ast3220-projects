@@ -33,7 +33,6 @@ Yp_i = 1 - Yn_i
 
 initial_abundance = [Yn_i, Yp_i, 0, 0, 0, 0, 0, 0]
 
-
 n_runs = 20
 
 Neff = np.linspace(1, 5, n_runs)
