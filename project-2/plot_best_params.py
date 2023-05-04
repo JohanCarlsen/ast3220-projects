@@ -6,7 +6,7 @@ plt.rcParams.update({
 	'text.usetex': True,
 	'font.family': 'Helvetica',
 	'font.size': 12,
-	'figure.figsize': (7, 7),
+	'figure.figsize': (10.6, 6),
 	'xtick.direction': 'inout',
 	'ytick.direction': 'inout'
 	})
