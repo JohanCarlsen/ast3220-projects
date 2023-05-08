@@ -5,7 +5,9 @@ from astropy import units
 from scipy.integrate import solve_ivp, simpson
 
 def t(T):
-
+	'''
+	Calculate the age of the Universe at the temperature T.
+	'''
 	Neff = 3. 
 	O_r0 = 8 * pi**3 * G / (45 * H0**2) * (k * T0)**4 / (hbar**3 * c**5) * (1 + Neff * 7/8 * (4/11)**(4/3))
 
@@ -41,6 +43,7 @@ def dYn_dYp(lnT, variables):
 	I_n_p = simpson(I1, x)
 	I_p_n = simpson(I2, x)
 
+	# Rates for n <--> p 
 	gamma_n_p = 1/tau * I_n_p
 	gamma_p_n = 1/tau * I_p_n
 
@@ -52,7 +55,10 @@ def dYn_dYp(lnT, variables):
 	return diffs
 
 def dYn_dYp_dYD(lnT, variables):
-
+	'''
+	Integrate function to calculate the
+	fractional abundances of n, p, and D.
+	'''
 	Yn, Yp, YD = variables
 
 	T = np.exp(lnT)
@@ -248,7 +254,10 @@ def strong_21(T_9, rho_b):
 
 
 def element_abundance(lnT, variables, Omega_b0=None, Omega_r0=None):
-
+	'''
+	Integration function to calculate the element
+	abundance for n, p, D, T, He3, He4, Li7, and Be7. 
+	'''
 	Yn, Yp, YD, YT, YHe3, YHe4, YLi7, YBe7 = variables
 
 	T = np.exp(lnT)
@@ -283,7 +292,7 @@ def element_abundance(lnT, variables, Omega_b0=None, Omega_r0=None):
 	func = lambda x, q: (x + q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(x * Z)) * (1 + np.exp(-(x + q) * Z_nu))) \
 	                  + (x - q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(-x * Z)) * (1 + np.exp((x - q) * Z_nu)))
 
-	x = np.linspace(1, 100, 1001)
+	x = np.linspace(1, 100, 3501)
 	I1 = func(x, q)
 	I2 = func(x, -q)
 
@@ -467,8 +476,7 @@ T0 = 2.725														# CMB temperature, today in K
 H0 = (100 * h * units.km / (units.s * units.Mpc)).cgs.value 	# Hubble constant, today in s^-1
 tau = 1700.														# Free neutron decay time [s]
 q = 2.53														# (m_n - m_p) / m_e
-
-rho_c0 = 3 * H0**2 / (8 * pi * G)
+rho_c0 = 3 * H0**2 / (8 * pi * G)								# Critical density today 
 
 if __name__ == '__main__':
 

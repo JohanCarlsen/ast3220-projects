@@ -6,7 +6,7 @@ plt.rcParams.update({
 	'text.usetex': True,
 	'font.family': 'Helvetica',
 	'font.size': 12,
-	'figure.figsize': (10.6, 6),
+	'figure.figsize': (8, 6),
 	'xtick.direction': 'inout',
 	'ytick.direction': 'inout'
 	})
@@ -15,7 +15,6 @@ plt.rcParams.update({
 Finding the best fit for Omega_b0
 '''
 model = np.load('fitting-O_b0-model-20-runs.npy')
-model[1, :] *= 4
 YHe3 = np.load('fitting-O_b0-YHe3-20-runs.npy')
 
 YDYp, YHe4, YLi7Yp = model
@@ -61,7 +60,7 @@ chi_sq = np.sum((model.T - obser)**2 / error**2, axis=-1)
 
 best_O_b0 = O_b0[np.where(chi_sq == np.min(chi_sq))[0][0]]
 
-print(f'Best fit for Omega_b0: {best_O_b0}, with chi2: {np.min(chi_sq):.4f}')
+print(f'\nBest fit for Omega_b0: {best_O_b0}, with chi2: {np.min(chi_sq):.4f}')
 
 prob = 1 / np.sqrt(2 * np.prod(error**2)) * np.exp(- chi_sq)
 
@@ -101,13 +100,15 @@ ax3.set_xlabel(r'$\Omega_{b0}$')
 fig.savefig('figures/best-fit-O_r0.pdf')
 fig.savefig('figures/best-fit-O_r0.png')
 
+plt.show()
+# exit()
+
 '''
 Finding the best fit for Neff. Note that in order to find the best fit for both 
 Omega_b0 and Neff, we first computed the above fit for Omega_b0, and then used 
 that value in the program fitting_Neffpy. 
 '''
 model = np.load('fitting-Neff-model-20-runs.npy')
-model[1, :] *= 4
 YHe3 = np.load('fitting-Neff-YHe3-20-runs.npy')
 
 YDYp, YHe4, YLi7Yp = model
@@ -138,7 +139,7 @@ chi_sq = np.sum((model.T - obser)**2 / error**2, axis=-1)
 
 best_Neff = Neff[np.where(chi_sq == np.min(chi_sq))[0][0]]
 
-print(f'Best fit for N_eff: {best_Neff:.4f}, with chi2: {np.min(chi_sq):.4f}')
+print(f'Best fit for N_eff: {best_Neff:.4f}, with chi2: {np.min(chi_sq):.4f}\n')
 
 prob = 1 / np.sqrt(2 * np.prod(error**2)) * np.exp(- chi_sq)
 
