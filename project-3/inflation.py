@@ -97,9 +97,9 @@ class InflationModel:
 			ax1.plot(tau, psi/self.psi_i, label='Exact')
 			ax1.set_ylabel(r'$\psi/\psi_i$')
 
-			if xlim is not None:
+			if xlim is not None or self.name == 'starobinsky_':
 
-				axins = ax1.inset_axes([0.5, 0.25, 0.3, 0.5])
+				axins = ax1.inset_axes([0.25, 0.25, 0.3, 0.5])
 				axins.plot(tau, psi/self.psi_i)
 
 				x1, x2, y1, y2 = 2697, 2713, -0.07, 0.07
@@ -223,7 +223,7 @@ class InflationModel:
 			fig.savefig('figures/' + self.name + 'Ntot-compare-with-SRA.pdf', bbox_inches='tight')
 			fig.savefig('figures/' + self.name + 'Ntot-compare-with-SRA.png', bbox_inches='tight')
 
-	def pressure_energy_density_ratio(self, xlim=None, zoomed=False):
+	def pressure_energy_density_ratio(self, zoomed=False):
 
 		v = self.potential(self.psi, self.psi_i)
 
@@ -236,7 +236,6 @@ class InflationModel:
 		ax.plot(self.tau, w_phi)
 		ax.set_xlabel(r'$\tau$')
 		ax.set_ylabel(r'$\frac{p_\phi}{\rho_{\phi} c^2}$')
-		ax.set_xlim(xlim)
 
 		if zoomed:
 
@@ -262,10 +261,16 @@ class InflationModel:
 
 		fig, ax = plt.subplots()
 
-		ax.plot(N_left, self.epsilon[idx])
+		ax.plot(N_left, self.epsilon[idx], label=r'$\epsilon$')
 		ax.set_xscale('log')
 		ax.set_xlabel(r'Remainding $e$-folds of inflation')
 		ax.set_ylabel(r'$\epsilon$')
+
+		if self.eta is not None:
+
+			ax.plot(N_left, self.eta[idx], label=r'$\eta$')
+			ax.legend()
+
 		ax.invert_xaxis()
 
 		fig.savefig('figures/' + self.name + 'epsilon_remainding_efolds.pdf', bbox_inches='tight')

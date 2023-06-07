@@ -83,17 +83,19 @@ phi2.pressure_energy_density_ratio()
 phi2.epsilon_remainding_e_folds()
 phi2.plot_tensor_to_scalar_ratio()
 
-starobinsky = InflationModel(2, 'starobinsky')
-starobinsky.set_end_of_inflation_time(2694.91)
+staro_psi_i = 2 
+staro_tau_end = 2694.91
+
+starobinsky = InflationModel(staro_psi_i, 'starobinsky')
+starobinsky.set_end_of_inflation_time(staro_tau_end)
 starobinsky.set_potential(staro_pot)
 starobinsky.set_potential_differential(diff_staro_pot)
 starobinsky.solve_scalar_field(3000)
 starobinsky.plot_solutions()
-starobinsky.plot_solutions(xlim=[2680, 2750])
 starobinsky.set_epsilon_parameter(staro_epsilon, print_tau_end=True)
 starobinsky.set_eta_parameter(staro_eta)
-starobinsky.num_e_folds(guess=None, text_ypos=0.6, plot=False)
-starobinsky.pressure_energy_density_ratio(zoomed=True)#xlim=[2685, 2705])
+starobinsky.num_e_folds(guess=None, plot=False)
+starobinsky.pressure_energy_density_ratio(zoomed=True)
 starobinsky.epsilon_remainding_e_folds()
 starobinsky.plot_tensor_to_scalar_ratio()
 
