@@ -97,6 +97,19 @@ class InflationModel:
 			ax1.plot(tau, psi/self.psi_i, label='Exact')
 			ax1.set_ylabel(r'$\psi/\psi_i$')
 
+			if xlim is not None:
+
+				axins = ax1.inset_axes([0.5, 0.25, 0.3, 0.5])
+				axins.plot(tau, psi/self.psi_i)
+
+				x1, x2, y1, y2 = 2697, 2713, -0.07, 0.07
+
+				axins.set_xlim([x1, x2])
+				axins.set_ylim([y1, y2])
+				axins.tick_params(labelbottom=False)
+
+				ax1.indicate_inset_zoom(axins, ec='black')
+
 			ax2.plot(tau, ln_a_ai)
 			ax2.set_ylabel(r'$\ln\left(\frac{a}{a_i}\right)$')
 
@@ -128,13 +141,26 @@ class InflationModel:
 			elif self.tau_end is not None:
 
 				ax1.plot([tau_end, tau_end], [- 0.1, 1.1], ls='dotted', color='black')
-				# ax1.set_ylim([- 0.1, 1.1])
+				ax1.set_ylim([- 0.1, 1.1])
 
-				ax2.plot([tau_end, tau_end], [- 5, np.max(self.ln_a_ai) + np.max(self.ln_a_ai) * 0.05], ls='dotted', color='black')
-				# ax2.set_ylim([- 5, np.max(self.ln_a_ai) + np.max(self.ln_a_ai) * 0.05])
+				ax2.plot([tau_end, tau_end], [- 5, np.max(self.ln_a_ai) * 1.1], ls='dotted', color='black')
+				ax2.set_ylim([- 5, np.max(self.ln_a_ai) * 1.1])
 
 				ax3.plot([tau_end, tau_end], [- 0.1, 1.1], ls='dotted', color='black')
-				# ax3.set_ylim([- 0.1, 1.1])
+				ax3.set_ylim([- 0.1, 1.1])
+
+			if self.name == 'phi2_' and not compare_to_SRA:
+
+				axins = ax1.inset_axes([0.75, 0.2, 0.2, 0.7])
+				axins.plot(tau, psi / self.psi_i)
+
+				x1, x2, y1, y2 = 1010, 1410, -0.02, 0.02
+
+				axins.set_xlim([x1, x2])
+				axins.set_ylim([y1, y2])
+				axins.tick_params(labelbottom=False)
+
+				ax1.indicate_inset_zoom(axins, ec='black')
 
 			if tight_layout:
 
@@ -144,7 +170,7 @@ class InflationModel:
 
 				fig.subplots_adjust(hspace=0.05)
 
-			# ax3.set_xlim(xlim)
+			ax3.set_xlim(xlim)
 
 			if xlim is not None:
 
@@ -169,7 +195,7 @@ class InflationModel:
 
 	def num_e_folds(self, text_xpos=0, text_ypos=0.8, guess=500, plot=True):
 
-		end_of_inflation_idx = np.where(self.epsilon <= 1)[0][-1]
+		end_of_inflation_idx = np.where(self.epsilon >= 1)[0][0]
 
 		self.N_tot = self.ln_a_ai[end_of_inflation_idx]
 		self.inflation_idx = self.epsilon <= 1
@@ -178,8 +204,7 @@ class InflationModel:
 
 		if guess is not None:
 
-			N_tot_relerr = np.abs(guess - self.N_tot) / np.abs(self.N_tot)
-			print(f'with rel. err. of N_tot: {N_tot_relerr:.3e}\n')
+			print(f'where we guessed N_tot to be {guess}')
 
 		if plot:
 
@@ -198,7 +223,7 @@ class InflationModel:
 			fig.savefig('figures/' + self.name + 'Ntot-compare-with-SRA.pdf', bbox_inches='tight')
 			fig.savefig('figures/' + self.name + 'Ntot-compare-with-SRA.png', bbox_inches='tight')
 
-	def pressure_energy_density_ratio(self, xlim=None):
+	def pressure_energy_density_ratio(self, xlim=None, zoomed=False):
 
 		v = self.potential(self.psi, self.psi_i)
 
@@ -212,6 +237,19 @@ class InflationModel:
 		ax.set_xlabel(r'$\tau$')
 		ax.set_ylabel(r'$\frac{p_\phi}{\rho_{\phi} c^2}$')
 		ax.set_xlim(xlim)
+
+		if zoomed:
+
+			axins = ax.inset_axes([0.2, 0.3, 0.5, 0.4])
+			axins.plot(self.tau, w_phi)
+
+			x1, x2, y1, y2 = 2690, 2730, -1.05, 1.05
+
+			axins.set_xlim([x1, x2])
+			axins.set_ylim([y1, y2])
+			axins.tick_params(labelbottom=False)
+
+			ax.indicate_inset_zoom(axins, ec='black')
 
 		fig.savefig('figures/' + self.name + 'w_phi.pdf', bbox_inches='tight')
 		fig.savefig('figures/' + self.name + 'w_phi.png', bbox_inches='tight')
