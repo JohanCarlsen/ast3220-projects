@@ -72,9 +72,11 @@ class InflationModel:
 		self.h = h; self.psi = psi; self.h2 = h**2
 		self.dpsi = dpsi; self.ln_a_ai = ln_a_ai; self.tau = tau
 
-		self.psi_SRA = self.psi_i - 1 / (4 * np.pi * self.psi_i) * tau  
-		self.h2_SRA = (1 - 1 / (4 * np.pi * self.psi_i**2) * tau)**2
-		self.ln_a_ai_SRA = tau - 1 / (8 * np.pi * self.psi_i**2) * tau**2
+		if self.name == 'phi2_':
+
+			self.psi_SRA = self.psi_i - 1 / (4 * np.pi * self.psi_i) * tau  
+			self.h2_SRA = (1 - 1 / (4 * np.pi * self.psi_i**2) * tau)**2
+			self.ln_a_ai_SRA = tau - 1 / (8 * np.pi * self.psi_i**2) * tau**2
 
 	def plot_solutions(self, compare_to_SRA=False, tight_layout=False, xlim=None):
 
@@ -259,16 +261,35 @@ class InflationModel:
 
 		N_left = self.N_tot - self.ln_a_ai[idx]
 
+		if self.name == 'starobinsky_':
+
+			y = - np.sqrt(16 * np.pi / 3) * self.psi
+
+			N_SRA = 3/4 * np.exp(-y)
+			epsilon_SRA = 3 / (4 * N_SRA**2)
+
+			idx_SRA = epsilon_SRA <= 1
+
+			N_tot_SRA = N_SRA[idx_SRA][0]
+
+			eta_SRA = - 1/N_SRA
+
+			print(f'\nN_tot from SRA: {N_tot_SRA:.3f}')
+
 		fig, ax = plt.subplots()
 
 		ax.plot(N_left, self.epsilon[idx], label=r'$\epsilon$')
+
 		ax.set_xscale('log')
 		ax.set_xlabel(r'Remainding $e$-folds of inflation')
 		ax.set_ylabel(r'$\epsilon$')
 
-		if self.eta is not None:
+		if self.eta is not None and self.name == 'starobinsky_':
 
+			ax.plot(N_SRA[idx_SRA], epsilon_SRA[idx_SRA], ls='dashed', color='black', label=r'$\epsilon_\mathrm{SRA}$')
 			ax.plot(N_left, self.eta[idx], label=r'$\eta$')
+			ax.plot(N_SRA[idx_SRA], eta_SRA[idx_SRA], ls='dashed', color='red', label=r'$\eta_\mathrm{SRA}$')
+
 			ax.legend()
 
 		ax.invert_xaxis()
@@ -298,11 +319,27 @@ class InflationModel:
 		fig, ax = plt.subplots()
 
 		ax.plot(n, r)
-		ax.fill_between(n, 0.044, alpha=0.25)
+
+		if self.name == 'starobinsky_':
+
+			y = - np.sqrt(16 * np.pi / 3) * self.psi
+
+			N_SRA = 3/4 * np.exp(-y)
+			N_idx_SRA = np.logical_and(N_SRA >= 50, N_SRA <= 60)
+
+			n_SRA = 1 - 2 / N_SRA[N_idx_SRA]
+			r_SRA = 12 / N_SRA[N_idx_SRA]**2
+
+			ax.plot(n_SRA, r_SRA, ls='dashed', label='SRA')
+			ax.legend()
+
+		fill_x = n if self.name == 'phi2_' else [np.min([np.min(n), np.min(n_SRA)]), np.max([np.max(n), np.max(n_SRA)])]
+
+		ax.fill_between(fill_x, 0.044, alpha=0.25)
 		ax.text(x_text, 0.02, r'$r<0.044$', ha='center')
 		ax.set_xlabel('n')
 		ax.set_ylabel('r')
-		ax.set_xlim([np.min(n), np.max(n)])
+		ax.set_xlim([np.min(fill_x), np.max(fill_x)])
 		ax.set_ylim([0, 1.1 * y_max])
 
 		fig.savefig('figures/' + self.name + 'n-r-plane.pdf', bbox_inches='tight')
