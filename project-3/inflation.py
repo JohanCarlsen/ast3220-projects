@@ -8,7 +8,7 @@ plt.rcParams.update({
 	'text.usetex': True,
 	'font.family': 'Helvetica',
 	'font.size': 12,
-	'figure.figsize': (8, 4.5),
+	'figure.figsize': (10.6, 5.3),
 	'xtick.direction': 'inout',
 	'ytick.direction': 'inout',
 	'lines.linewidth': 1,
@@ -18,22 +18,32 @@ plt.rcParams.update({
 class InflationModel:
 
 	def __init__(self, scalar_field_init_value, model_name):
+		'''
+		Constructor of the class. Initiates the object with initial
+		value for the scalar field, and the name of the model.
 
+		:param scalar_field_init_value:		Initial scalar field value, float 
+		:param model_name:					Name of the model, str
+		'''
 		self.psi_i = scalar_field_init_value
 		self.name = str(model_name) + '_'
 		self.tau_end = None
 		self.eta = None
 
-	def set_end_of_inflation_time(self, end_time):
-
-		self.tau_end = end_time
-
 	def set_potential(self, potential):
+		'''
+		Set the potential for the model.
 
+		:param potential: Potential for the model, callable
+		'''
 		self.potential = potential 
 
 	def set_potential_differential(self, pot_diff):
+		'''
+		Set the differential for the model.
 
+		:param pot_diff: Derivative of the potential w.r.t. the field, callable
+		'''
 		self.pot_diff = pot_diff
 
 	def double_time_derivative_scalar_field(self, psi, dpsi, h):
@@ -43,13 +53,26 @@ class InflationModel:
 		return - 3 * h * dpsi - dv
 
 	def dimensionless_Hubble_parameter(self, psi, dpsi):
+		'''
+		Calculate the dimensionless Hubble parameter.
 
+		:param psi:		Scalar field, array
+		:param dpsi:	Time-derivative of the scalar field, array
+		:return:		Dimensionless Hubble parameter, array
+		'''
 		v = self.potential(psi, self.psi_i)
 
 		return np.sqrt(8 * np.pi / 3 * (1/2 * dpsi**2 + v))
 
 	def solve_scalar_field(self, total_time, dtau=1e-2):
+		'''
+		Solve the equation of motion for the scalar field.
+		If the model is the phi2 model, the SRA for psi,
+		h^2, and ln(a/a_i) is calculated here.
 
+		:param total_time:	End-time of integration, float
+		:param dtau:		Time step, float
+		'''
 		N = int(np.ceil(total_time / dtau))
 		tau = np.linspace(0, total_time, N+1)
 
@@ -59,6 +82,8 @@ class InflationModel:
 		ln_a_ai = np.zeros(N+1)
 
 		h[0] = 1; psi[0] = self.psi_i
+
+		print('\nSolving the ' + self.name + 'model\n')
 
 		for i in range(N):
 
@@ -79,7 +104,13 @@ class InflationModel:
 			self.ln_a_ai_SRA = tau - 1 / (8 * np.pi * self.psi_i**2) * tau**2
 
 	def plot_solutions(self, compare_to_SRA=False, tight_layout=False, xlim=None):
+		'''
+		Plot the solutions from solve_scalar_field.
 
+		:param compare_to_SRA:		boolean, True/False
+		:param tight_layout:		boolean, True/False
+		:param xlim:				Min. x-value and max. x-value, array
+		'''
 		filename = 'num-sols' if not compare_to_SRA else 'SRA-compare'
 
 		tau, tau_end, psi, ln_a_ai, h2 = self.tau, self.tau_end, self.psi, self.ln_a_ai, self.h2
@@ -182,7 +213,12 @@ class InflationModel:
 			fig.savefig('figures/' + self.name + filename + '.png', bbox_inches='tight')
 
 	def set_epsilon_parameter(self, epsilon, print_tau_end=False):
+		'''
+		Set the function for calculating the SRA parameter epsilon.
 
+		:param epsilon:			Epsilon function, callable
+		:param print_tau_end:	boolean, True/False
+		'''
 		self.epsilon = epsilon(self.psi)
 		end_idx = np.where(self.epsilon <= 1)[0][-1]
 		self.tau_end = self.tau[end_idx]
@@ -192,11 +228,23 @@ class InflationModel:
 			print(f'\nTime when epsilon <= 1 for the last time: {self.tau_end}')
 
 	def set_eta_parameter(self, eta):
+		'''
+		Set the function for the SRA parameter eta.
 
+		:param eta: Eta function, callable
+		'''
 		self.eta = eta(self.psi)
 
 	def num_e_folds(self, text_xpos=0, text_ypos=0.8, guess=500, plot=True):
+		'''
+		Calculate the total number of e-folds of
+		inflation and plot the result (optional).
 
+		:param text_xpos:	Where along the x-axis to put the text, float
+		:param text_ypos:	Where along the y-axis to put the text, float
+		:param guess:		Guess for N_tot, float/None
+		:param plot:		boolean, Ture/False
+		'''
 		end_of_inflation_idx = np.where(self.epsilon >= 1)[0][0]
 
 		self.N_tot = self.ln_a_ai[end_of_inflation_idx]
@@ -226,7 +274,11 @@ class InflationModel:
 			fig.savefig('figures/' + self.name + 'Ntot-compare-with-SRA.png', bbox_inches='tight')
 
 	def pressure_energy_density_ratio(self, zoomed=False):
+		'''
+		Calculate and plot the pressure to energy density ratio.
 
+		:param zoomed:	boolean, True/False
+		'''
 		v = self.potential(self.psi, self.psi_i)
 
 		p_phi = 0.5 * self.dpsi**2 - v
@@ -255,8 +307,12 @@ class InflationModel:
 		fig.savefig('figures/' + self.name + 'w_phi.pdf', bbox_inches='tight')
 		fig.savefig('figures/' + self.name + 'w_phi.png', bbox_inches='tight')
 
-	def epsilon_remainding_e_folds(self):
-
+	def SRA_params_remaining_e_folds(self):
+		'''
+		Plot the SRA parameters epsilon and eta as functions
+		of e-folds. If epsilon=eta, i.e. self.eta=None, only
+		the epsilon parameter will be plotted.
+		'''
 		idx = self.epsilon <= 1
 
 		N_left = self.N_tot - self.ln_a_ai[idx]
@@ -281,8 +337,9 @@ class InflationModel:
 		ax.plot(N_left, self.epsilon[idx], label=r'$\epsilon$')
 
 		ax.set_xscale('log')
-		ax.set_xlabel(r'Remainding $e$-folds of inflation')
-		ax.set_ylabel(r'$\epsilon$')
+		ax.set_xlabel(r'Remaining $e$-folds of inflation')
+		ylabel = r'$\epsilon$' if self.name == 'phi2_' else None
+		ax.set_ylabel(ylabel)
 
 		if self.eta is not None and self.name == 'starobinsky_':
 
@@ -298,7 +355,11 @@ class InflationModel:
 		fig.savefig('figures/' + self.name + 'epsilon_remainding_efolds.png', bbox_inches='tight')
 
 	def plot_tensor_to_scalar_ratio(self):
-
+		'''
+		Plot the tensor-to-scalar ration r as function of
+		the scalar spectral index n. Also, the upper limit
+		for r of 0.044 is included as a shaded region in the plot.
+		'''
 		N = self.N_tot - self.ln_a_ai
 		N_idx = np.logical_and(N >= 50, N <= 60)
 

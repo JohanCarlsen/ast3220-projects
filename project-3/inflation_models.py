@@ -5,7 +5,11 @@ from inflation import InflationModel
 ### Phi-squared potential functions ###
 def phi2_pot(psi, psi_i):
 	'''
-	Dimensionless potential.
+	Phi^2 potential.
+
+	:param psi:		Scalar field, float or array
+	:param psi_i:	Initial value of the scalar field, float
+	:return:		Potential, float or array
 	'''
 	v = 3 / (8 * np.pi) * (psi / psi_i)**2
 
@@ -13,7 +17,11 @@ def phi2_pot(psi, psi_i):
 
 def diff_phi2_pot(psi, psi_i):
 	'''
-	Differential of the phi2 potential
+	Differential of the phi^2 potential.
+
+	:param psi:		Scalar field, float or array
+	:param psi_i:	Initial value for the scalar field, float
+	:return:		Potential differential, float or array
 	'''
 	dv = 3 / (4 * np.pi) * psi / psi_i**2
 
@@ -21,14 +29,21 @@ def diff_phi2_pot(psi, psi_i):
 
 def phi2_epsilon(psi):
 	'''
-	SRA parameter epsilon
+	SRA parameter epsilon for the phi^2 potential.
+
+	:param psi:		Scalar field, float or array
+	:return:		Epsilon, float or array
 	'''
 	return 1 / (4 * np.pi * psi**2)
 
 ### Starobinsky potential functions ###
 def staro_pot(psi, psi_i):
 	'''
-	Starobinsky potential
+	Starobinsky potential.
+
+	:param psi:		Scalar field, float or array
+	:param psi_i:	Initial value for the scalar field, float
+	:return:		Potential, float or array
 	'''
 	y = - np.sqrt(16 * np.pi / 3) * psi 
 	y_i = - np.sqrt(16 * np.pi / 3) * psi_i
@@ -40,6 +55,10 @@ def staro_pot(psi, psi_i):
 def diff_staro_pot(psi, psi_i):
 	'''
 	Differential of the Starobinksy potential.
+
+	:param psi:		Scalar field, float or array
+	:param psi_i:	Initial value for the scalar field, float
+	:return:		Potential differential, float or array
 	'''
 	y = - np.sqrt(16 * np.pi / 3) * psi 
 	y_i = - np.sqrt(16 * np.pi / 3) * psi_i
@@ -50,7 +69,10 @@ def diff_staro_pot(psi, psi_i):
 
 def staro_epsilon(psi):
 	'''
-	SRA parameter epsilon
+	SRA parameter epsilon for the Starobinsky potential.
+
+	:param psi: Scalar field, float or array
+	:return:	Epsilon, float or array
 	'''
 	y = - np.sqrt(16 * np.pi / 3) * psi 
 	eps = 4 / 3 * np.exp(2 * y) / (1 - np.exp(y))**2
@@ -59,7 +81,10 @@ def staro_epsilon(psi):
 
 def staro_eta(psi):
 	'''
-	SRA parameter eta
+	SRA parameter eta for the Starobinsky potential.
+
+	:param psi:	Scalar field, float or array
+	:return:	Eta, float or array
 	'''
 	y = - np.sqrt(16 * np.pi / 3) * psi 
 	eta = 4 / 3 * (2 * np.exp(2 * y) - np.exp(y)) / (1 - np.exp(y))**2
@@ -71,32 +96,30 @@ phi2_psi_i = 8.9251
 phi2_tau_end = 4 * np.pi * phi2_psi_i**2 - 2 * np.sqrt(np.pi) / phi2_psi_i
 
 phi2 = InflationModel(phi2_psi_i, 'phi2')
-phi2.set_end_of_inflation_time(phi2_tau_end)
 phi2.set_potential(phi2_pot)
 phi2.set_potential_differential(diff_phi2_pot)
 phi2.solve_scalar_field(1500)
+phi2.set_epsilon_parameter(phi2_epsilon, print_tau_end=True)
 phi2.plot_solutions(compare_to_SRA=True)
 phi2.plot_solutions()
-phi2.set_epsilon_parameter(phi2_epsilon)
 phi2.num_e_folds()
 phi2.pressure_energy_density_ratio()
-phi2.epsilon_remainding_e_folds()
+phi2.SRA_params_remaining_e_folds()
 phi2.plot_tensor_to_scalar_ratio()
 
 staro_psi_i = 2 
 staro_tau_end = 2694.91
 
 starobinsky = InflationModel(staro_psi_i, 'starobinsky')
-starobinsky.set_end_of_inflation_time(staro_tau_end)
 starobinsky.set_potential(staro_pot)
 starobinsky.set_potential_differential(diff_staro_pot)
 starobinsky.solve_scalar_field(3000)
-starobinsky.plot_solutions()
 starobinsky.set_epsilon_parameter(staro_epsilon, print_tau_end=True)
 starobinsky.set_eta_parameter(staro_eta)
+starobinsky.plot_solutions()
 starobinsky.num_e_folds(guess=None, plot=False)
 starobinsky.pressure_energy_density_ratio(zoomed=True)
-starobinsky.epsilon_remainding_e_folds()
+starobinsky.SRA_params_remaining_e_folds()
 starobinsky.plot_tensor_to_scalar_ratio()
 
 plt.show()
