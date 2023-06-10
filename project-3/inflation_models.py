@@ -120,6 +120,8 @@ starobinsky.plot_solutions()
 starobinsky.num_e_folds(guess=None, plot=False)
 starobinsky.pressure_energy_density_ratio(zoomed=True)
 starobinsky.SRA_params_remaining_e_folds()
+starobinsky.SRA_params_remaining_e_folds(include_approx=True)
 starobinsky.plot_tensor_to_scalar_ratio()
+starobinsky.plot_tensor_to_scalar_ratio(include_approx=True)
 
 plt.show()

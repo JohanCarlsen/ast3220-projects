@@ -265,10 +265,13 @@ class InflationModel:
 			if self.eta is not None:
 
 				ax.plot(self.tau[self.inflation_idx], self.eta[self.inflation_idx], label=r'$\eta$')
+				ax.legend()
 
 			ax.text(text_xpos, text_ypos, r'$N_\mathrm{tot}=' + f'{self.N_tot:.3f}$')
-			ax.legend()
 			ax.set_xlabel(r'$\tau$')
+
+			ylabel = r'$\epsilon$' if self.eta is None else None
+			ax.set_ylabel(ylabel)
 
 			fig.savefig('figures/' + self.name + 'Ntot-compare-with-SRA.pdf', bbox_inches='tight')
 			fig.savefig('figures/' + self.name + 'Ntot-compare-with-SRA.png', bbox_inches='tight')
@@ -307,12 +310,15 @@ class InflationModel:
 		fig.savefig('figures/' + self.name + 'w_phi.pdf', bbox_inches='tight')
 		fig.savefig('figures/' + self.name + 'w_phi.png', bbox_inches='tight')
 
-	def SRA_params_remaining_e_folds(self):
+	def SRA_params_remaining_e_folds(self, include_approx=False):
 		'''
 		Plot the SRA parameters epsilon and eta as functions
 		of e-folds. If epsilon=eta, i.e. self.eta=None, only
 		the epsilon parameter will be plotted.
+
+		:param include_approx: boolean, True/False
 		'''
+		save_name = self.name
 		idx = self.epsilon <= 1
 
 		N_left = self.N_tot - self.ln_a_ai[idx]
@@ -334,32 +340,40 @@ class InflationModel:
 
 		fig, ax = plt.subplots()
 
-		ax.plot(N_left, self.epsilon[idx], label=r'$\epsilon$')
+		ax.plot(N_left, self.epsilon[idx], label=r'$\epsilon_\mathrm{exact}$')
 
 		ax.set_xscale('log')
 		ax.set_xlabel(r'Remaining $e$-folds of inflation')
 		ylabel = r'$\epsilon$' if self.name == 'phi2_' else None
 		ax.set_ylabel(ylabel)
 
-		if self.eta is not None and self.name == 'starobinsky_':
+		if self.eta is not None:
 
-			ax.plot(N_SRA[idx_SRA], epsilon_SRA[idx_SRA], ls='dashed', color='black', label=r'$\epsilon_\mathrm{SRA}$')
-			ax.plot(N_left, self.eta[idx], label=r'$\eta$')
-			ax.plot(N_SRA[idx_SRA], eta_SRA[idx_SRA], ls='dashed', color='red', label=r'$\eta_\mathrm{SRA}$')
+			ax.plot(N_left, self.eta[idx], label=r'$\eta_\mathrm{exact}$')
+
+			if include_approx:
+
+				ax.plot(N_SRA[idx_SRA], epsilon_SRA[idx_SRA], ls='dashed', color='black', label=r'$\epsilon\approx\frac{3}{4N^2}$')
+				ax.plot(N_SRA[idx_SRA], eta_SRA[idx_SRA], ls='dashed', color='red', label=r'$\eta\approx-\frac{1}{N}$')
+
+				save_name += 'with_approx_'
 
 			ax.legend()
 
 		ax.invert_xaxis()
 
-		fig.savefig('figures/' + self.name + 'epsilon_remainding_efolds.pdf', bbox_inches='tight')
-		fig.savefig('figures/' + self.name + 'epsilon_remainding_efolds.png', bbox_inches='tight')
+		fig.savefig('figures/' + save_name + 'epsilon_remainding_efolds.pdf', bbox_inches='tight')
+		fig.savefig('figures/' + save_name + 'epsilon_remainding_efolds.png', bbox_inches='tight')
 
-	def plot_tensor_to_scalar_ratio(self):
+	def plot_tensor_to_scalar_ratio(self, include_approx=False):
 		'''
 		Plot the tensor-to-scalar ration r as function of
 		the scalar spectral index n. Also, the upper limit
 		for r of 0.044 is included as a shaded region in the plot.
+
+		:param include_approx: boolean, True/False
 		'''
+		save_name = self.name
 		N = self.N_tot - self.ln_a_ai
 		N_idx = np.logical_and(N >= 50, N <= 60)
 
@@ -377,6 +391,8 @@ class InflationModel:
 
 		y_max = np.max([np.max(r), 0.044])
 
+		fill_x = n
+
 		fig, ax = plt.subplots()
 
 		ax.plot(n, r)
@@ -391,17 +407,20 @@ class InflationModel:
 			n_SRA = 1 - 2 / N_SRA[N_idx_SRA]
 			r_SRA = 12 / N_SRA[N_idx_SRA]**2
 
-			ax.plot(n_SRA, r_SRA, ls='dashed', label='SRA')
-			ax.legend()
+			if include_approx:
 
-		fill_x = n if self.name == 'phi2_' else [np.min([np.min(n), np.min(n_SRA)]), np.max([np.max(n), np.max(n_SRA)])]
+				ax.plot(n_SRA, r_SRA, ls='dotted', label='Approx.')
+				ax.legend()
+
+				fill_x = [np.min([np.min(n), np.min(n_SRA)]), np.max([np.max(n), np.max(n_SRA)])]
+				save_name += 'with_approx_'
 
 		ax.fill_between(fill_x, 0.044, alpha=0.25)
 		ax.text(x_text, 0.02, r'$r<0.044$', ha='center')
-		ax.set_xlabel('n')
-		ax.set_ylabel('r')
+		ax.set_xlabel(r'$n$')
+		ax.set_ylabel(r'$r$')
 		ax.set_xlim([np.min(fill_x), np.max(fill_x)])
 		ax.set_ylim([0, 1.1 * y_max])
 
-		fig.savefig('figures/' + self.name + 'n-r-plane.pdf', bbox_inches='tight')
-		fig.savefig('figures/' + self.name + 'n-r-plane.png', bbox_inches='tight')
+		fig.savefig('figures/' + save_name + 'n-r-plane.pdf', bbox_inches='tight')
+		fig.savefig('figures/' + save_name + 'n-r-plane.png', bbox_inches='tight')
