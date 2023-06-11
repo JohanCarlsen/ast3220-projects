@@ -387,11 +387,24 @@ class InflationModel:
 
 		r = 16 * self.epsilon[N_idx]
 
-		x_text = np.max(n) - (np.max(n) - np.min(n)) / 2
+		if not include_approx:
 
-		y_max = np.max([np.max(r), 0.044])
+			print('\nr and n values for the ' + self.name + 'model:')
+			print(f'r_min = {np.min(r):.3f}')
+			print(f'r_max = {np.max(r):.3f}')
+			print(f'n_min = {np.min(n):.4f}')
+			print(f'n_max = {np.max(n):.4f}')
 
-		fill_x = n
+		r_max = 0.044
+		n_min, n_max = 0.9607, 0.9691
+
+		y_max = np.max([np.max(r), r_max])
+		x_min = np.min([np.min(n), n_min])
+		x_max = np.max([np.max(n), n_max])
+		x = [x_min, x_max]
+
+		x_text = x_max - (x_max - x_min) / 2
+		xlabels = np.arange(float(f'{x_min:.3f}'), float(f'{x_max:.3f}'), 0.001)
 
 		fig, ax = plt.subplots()
 
@@ -409,17 +422,26 @@ class InflationModel:
 
 			if include_approx:
 
+				print('\nr and n values for the ' + self.name + 'model approximation:')
+				print(f'r_min = {np.min(r_SRA):.3f}')
+				print(f'r_max = {np.max(r_SRA):.3f}')
+				print(f'n_min = {np.min(n_SRA):.4f}')
+				print(f'n_max = {np.max(n_SRA):.4f}\n')
+
 				ax.plot(n_SRA, r_SRA, ls='dotted', label='Approx.')
 				ax.legend()
 
-				fill_x = [np.min([np.min(n), np.min(n_SRA)]), np.max([np.max(n), np.max(n_SRA)])]
+				x_min = np.min([np.min(n), n_min, np.min(n_SRA)])
+
 				save_name += 'with_approx_'
 
-		ax.fill_between(fill_x, 0.044, alpha=0.25)
-		ax.text(x_text, 0.02, r'$r<0.044$', ha='center')
+		ax.fill_between(x, r_max, alpha=0.25)
+		ax.text(x_text, 0.025, r'$r<0.044$', ha='center')
+		ax.text(x_text, 0.015, r'$0.9607<n<0.9691$', ha='center')
 		ax.set_xlabel(r'$n$')
 		ax.set_ylabel(r'$r$')
-		ax.set_xlim([np.min(fill_x), np.max(fill_x)])
+		ax.set_xlim([x_min - 0.0002, x_max + 0.0002])
+		ax.set_xticks(xlabels)
 		ax.set_ylim([0, 1.1 * y_max])
 
 		fig.savefig('figures/' + save_name + 'n-r-plane.pdf', bbox_inches='tight')
