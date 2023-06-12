@@ -47,7 +47,13 @@ class InflationModel:
 		self.pot_diff = pot_diff
 
 	def double_time_derivative_scalar_field(self, psi, dpsi, h):
+		'''
+		The EoM for the scalar field, solved for d^2(psi)/dtau^2.
 
+		:param psi:		Scalar field, float or array
+		:param dpsi:	Derivative of scalar field, float or array
+		:param h:		Hubble parameter, float or array
+		'''
 		dv = self.pot_diff(psi, self.psi_i)
 
 		return - 3 * h * dpsi - dv
@@ -214,7 +220,10 @@ class InflationModel:
 
 	def set_epsilon_parameter(self, epsilon, print_tau_end=False):
 		'''
-		Set the function for calculating the SRA parameter epsilon.
+		Set the function for calculating the SRA
+		parameter epsilon. This will also set the
+		end of inflation from when epsilon <= 1
+		for the last time.
 
 		:param epsilon:			Epsilon function, callable
 		:param print_tau_end:	boolean, True/False
@@ -370,6 +379,8 @@ class InflationModel:
 		Plot the tensor-to-scalar ration r as function of
 		the scalar spectral index n. Also, the upper limit
 		for r of 0.044 is included as a shaded region in the plot.
+		For the Starobinsky model, the approximations can also 
+		be included in the plots to compare to the analytical results.
 
 		:param include_approx: boolean, True/False
 		'''
@@ -435,7 +446,7 @@ class InflationModel:
 
 				save_name += 'with_approx_'
 
-		ax.fill_between(x, r_max, alpha=0.25)
+		ax.fill_between(x, r_max, alpha=0.15)
 		ax.text(x_text, 0.025, r'$r<0.044$', ha='center')
 		ax.text(x_text, 0.015, r'$0.9607<n<0.9691$', ha='center')
 		ax.set_xlabel(r'$n$')

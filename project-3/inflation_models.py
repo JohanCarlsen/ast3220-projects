@@ -91,7 +91,7 @@ def staro_eta(psi):
 
 	return eta
 
-
+# Initial field value and the time when inflation ends for the phi2-model
 phi2_psi_i = 8.9251
 phi2_tau_end = 4 * np.pi * phi2_psi_i**2 - 2 * np.sqrt(np.pi) / phi2_psi_i
 
@@ -107,6 +107,7 @@ phi2.pressure_energy_density_ratio()
 phi2.SRA_params_remaining_e_folds()
 phi2.plot_tensor_to_scalar_ratio()
 
+# Initial field value and the time when inflation ends for the Starobinsky model
 staro_psi_i = 2 
 staro_tau_end = 2694.91
 
