@@ -1,5 +1,5 @@
-import numpy as np 
-import matplotlib.pyplot as plt 
+import numpy as np
+import matplotlib.pyplot as plt
 from inflation import InflationModel
 
 ### Phi-squared potential functions ###
@@ -25,7 +25,7 @@ def diff_phi2_pot(psi, psi_i):
 	'''
 	dv = 3 / (4 * np.pi) * psi / psi_i**2
 
-	return dv 
+	return dv
 
 def phi2_epsilon(psi):
 	'''
@@ -45,12 +45,13 @@ def staro_pot(psi, psi_i):
 	:param psi_i:	Initial value for the scalar field, float
 	:return:		Potential, float or array
 	'''
-	y = - np.sqrt(16 * np.pi / 3) * psi 
+	# Shorthand notations
+	y = - np.sqrt(16 * np.pi / 3) * psi
 	y_i = - np.sqrt(16 * np.pi / 3) * psi_i
 
 	v = 3 / (8 * np.pi) * ((1 - np.exp(y)) / (1 - np.exp(y_i)))**2
 
-	return v 
+	return v
 
 def diff_staro_pot(psi, psi_i):
 	'''
@@ -60,7 +61,8 @@ def diff_staro_pot(psi, psi_i):
 	:param psi_i:	Initial value for the scalar field, float
 	:return:		Potential differential, float or array
 	'''
-	y = - np.sqrt(16 * np.pi / 3) * psi 
+	# Shorthand notations
+	y = - np.sqrt(16 * np.pi / 3) * psi
 	y_i = - np.sqrt(16 * np.pi / 3) * psi_i
 
 	dv = np.sqrt(3 / np.pi) * (1 - np.exp(y)) * np.exp(y) / (1 - np.exp(y_i))**2
@@ -74,7 +76,8 @@ def staro_epsilon(psi):
 	:param psi: Scalar field, float or array
 	:return:	Epsilon, float or array
 	'''
-	y = - np.sqrt(16 * np.pi / 3) * psi 
+	# Shorthand notation
+	y = - np.sqrt(16 * np.pi / 3) * psi
 	eps = 4 / 3 * np.exp(2 * y) / (1 - np.exp(y))**2
 
 	return eps
@@ -86,14 +89,14 @@ def staro_eta(psi):
 	:param psi:	Scalar field, float or array
 	:return:	Eta, float or array
 	'''
-	y = - np.sqrt(16 * np.pi / 3) * psi 
+	# Shorthand notation
+	y = - np.sqrt(16 * np.pi / 3) * psi
 	eta = 4 / 3 * (2 * np.exp(2 * y) - np.exp(y)) / (1 - np.exp(y))**2
 
 	return eta
 
-# Initial field value and the time when inflation ends for the phi2-model
+# Initial value for the scalar field, found from the SRA.
 phi2_psi_i = 8.9251
-phi2_tau_end = 4 * np.pi * phi2_psi_i**2 - 2 * np.sqrt(np.pi) / phi2_psi_i
 
 phi2 = InflationModel(phi2_psi_i, 'phi2')
 phi2.set_potential(phi2_pot)
@@ -107,9 +110,8 @@ phi2.pressure_energy_density_ratio()
 phi2.SRA_params_remaining_e_folds()
 phi2.plot_tensor_to_scalar_ratio()
 
-# Initial field value and the time when inflation ends for the Starobinsky model
-staro_psi_i = 2 
-staro_tau_end = 2694.91
+# Initial value for the scalar field is set to 2.
+staro_psi_i = 2
 
 starobinsky = InflationModel(staro_psi_i, 'starobinsky')
 starobinsky.set_potential(staro_pot)

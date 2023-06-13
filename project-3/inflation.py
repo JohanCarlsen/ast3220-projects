@@ -1,9 +1,10 @@
-import numpy as np 
-import matplotlib.pyplot as plt 
+import numpy as np
+import matplotlib.pyplot as plt
 import scipy.constants as const
 from scipy.integrate import simpson
 from cycler import cycler
 
+# Customizing the plots
 plt.rcParams.update({
 	'text.usetex': True,
 	'font.family': 'Helvetica',
@@ -16,19 +17,23 @@ plt.rcParams.update({
 	})
 
 class InflationModel:
-
+	'''
+	This class represents an inflation model. Needs potential, spatial derivative
+	of potential, epsilon and eta, and initial value to create a specific model.
+	'''
 	def __init__(self, scalar_field_init_value, model_name):
 		'''
 		Constructor of the class. Initiates the object with initial
 		value for the scalar field, and the name of the model.
 
-		:param scalar_field_init_value:		Initial scalar field value, float 
+		:param scalar_field_init_value:		Initial scalar field value, float
 		:param model_name:					Name of the model, str
 		'''
 		self.psi_i = scalar_field_init_value
 		self.name = str(model_name) + '_'
-		self.tau_end = None
-		self.eta = None
+
+		self.tau_end = None		# Analytic tau_end is computed after epsilon is set
+		self.eta = None			# Can be set manually, if not stays None
 
 	def set_potential(self, potential):
 		'''
@@ -36,7 +41,7 @@ class InflationModel:
 
 		:param potential: Potential for the model, callable
 		'''
-		self.potential = potential 
+		self.potential = potential
 
 	def set_potential_differential(self, pot_diff):
 		'''
@@ -103,9 +108,10 @@ class InflationModel:
 		self.h = h; self.psi = psi; self.h2 = h**2
 		self.dpsi = dpsi; self.ln_a_ai = ln_a_ai; self.tau = tau
 
+		# The phi2-model has SRA solutions we can compare with
 		if self.name == 'phi2_':
 
-			self.psi_SRA = self.psi_i - 1 / (4 * np.pi * self.psi_i) * tau  
+			self.psi_SRA = self.psi_i - 1 / (4 * np.pi * self.psi_i) * tau
 			self.h2_SRA = (1 - 1 / (4 * np.pi * self.psi_i**2) * tau)**2
 			self.ln_a_ai_SRA = tau - 1 / (8 * np.pi * self.psi_i**2) * tau**2
 
@@ -119,10 +125,13 @@ class InflationModel:
 		'''
 		filename = 'num-sols' if not compare_to_SRA else 'SRA-compare'
 
-		tau, tau_end, psi, ln_a_ai, h2 = self.tau, self.tau_end, self.psi, self.ln_a_ai, self.h2
+		tau, tau_end, psi = self.tau, self.tau_end, self.psi
+		ln_a_ai, h2 = self.ln_a_ai, self.h2
 
 		if xlim is not None:
-
+			'''
+			Zoom in on a given interval of tau.
+			'''
 			min_idx = np.where(tau >= xlim[0])[0][0]
 			max_idx = np.where(tau <= xlim[1])[0][-1]
 
@@ -164,10 +173,10 @@ class InflationModel:
 				ax1.set_ylim([- 0.75, 0.65])
 				ax1.legend()
 
-				ax2.plot(tau, ln_a_ai_SRA, ls='dashed', label='SRA')				
+				ax2.plot(tau, ln_a_ai_SRA, ls='dashed', label='SRA')
 				ax2.set_ylim([345, 655])
 
-				ax3.plot(tau, h2_SRA, ls='dashed', label='SRA')				
+				ax3.plot(tau, h2_SRA, ls='dashed', label='SRA')
 				ax3.set_ylim([- 0.35, 0.45])
 				ax3.set_xlim([850, 1510])
 
@@ -294,7 +303,7 @@ class InflationModel:
 		v = self.potential(self.psi, self.psi_i)
 
 		p_phi = 0.5 * self.dpsi**2 - v
-		rho_phi_c2 = 0.5 * self.dpsi**2 + v 
+		rho_phi_c2 = 0.5 * self.dpsi**2 + v
 		w_phi = p_phi / rho_phi_c2
 
 		fig, ax = plt.subplots()
@@ -379,7 +388,7 @@ class InflationModel:
 		Plot the tensor-to-scalar ration r as function of
 		the scalar spectral index n. Also, the upper limit
 		for r of 0.044 is included as a shaded region in the plot.
-		For the Starobinsky model, the approximations can also 
+		For the Starobinsky model, the approximations can also
 		be included in the plots to compare to the analytical results.
 
 		:param include_approx: boolean, True/False
@@ -394,7 +403,7 @@ class InflationModel:
 
 		else:
 
-			n = 1 - 4 * self.epsilon[N_idx] 
+			n = 1 - 4 * self.epsilon[N_idx]
 
 		r = 16 * self.epsilon[N_idx]
 
